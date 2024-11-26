@@ -1,0 +1,5 @@
+/.quarto/
+*.html
+*.docx
+/.luarc.json
+.DS_Store

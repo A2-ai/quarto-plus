@@ -1,0 +1,88 @@
+---
+title: "Quarto-Plus Examples"
+format: docx
+filters:
+  - quarto-plus
+---
+
+#
+
+# header.lua
+
+There is an empty level 1 header before header.lua in the .qmd, but it should be removed.
+
+All headers within the document should be indented. 
+
+{{< pagebreak >}}
+
+# magic_string.lua
+
+The following image should have a magic string before it, but after this sentence.
+
+![](images/figure.jpg)
+
+The magic string is dependent on the image's source.
+
+{{< pagebreak >}}
+
+# table_of_contents.lua
+
+Table of Contents should be inserted below.
+
+::: .toc
+:::
+
+{{< pagebreak >}}
+
+List of Figures should be inserted below.
+
+::: .list_of_figures
+:::
+
+{{< pagebreak >}}
+
+List of Tables should be inserted below.
+
+::: .list_of_tables
+:::
+
+{{< pagebreak >}}
+
+# terms_and_abbreviations.lua
+
+Test abbreviations: \Gls{PK} and \Glspl{PK}; \glspl{PD} and \gls{PD}
+
+Terms and Abbreviations table should be inserted below.
+
+::: .abbreviations
+:::
+
+{{< pagebreak >}}
+
+# style.lua
+
+{{< style "Caption" "This should be in caption style" >}}
+
+{{< pagebreak >}}
+
+# crossref.lua
+
+The following should insert a caption for tables:
+
+{{< tbl_caption "Table 1" "This is a simple summary table" >}}
+
+The following should be a cross-reference to the above table caption:
+
+{{< crossref "Table 1" >}}
+
+{{< pagebreak >}}
+
+The following should insert a caption for figures:
+
+{{< fig_caption "Figure 1" "This is a simple concentration-time figure" >}}
+
+The following should be a cross-reference to the above figure caption:
+
+{{< crossref "Figure 1" >}}
+
+{{< pagebreak >}}
