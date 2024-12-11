@@ -11,15 +11,18 @@ function Para(para)
     if elem.t == 'Image' then
       quarto.log.debug("Found an image element. Source: " .. elem.src)
 
-      -- Extract the file name from the full path
-      local image_name = elem.src:match("^.+/(.+)$") or elem.src
-
-      -- Insert the magic string with the image name
-      table.insert(blocks, pandoc.Para { pandoc.Str(magic_string .. image_name) })
-
-      -- Add the image as a new paragraph
-      quarto.log.debug("Inserting image")
-      table.insert(blocks, pandoc.Para { elem })
+      -- Check if the image has the attribute 'skip-magic'
+      if elem.attributes and elem.attributes["skip-magic"] == "true" then
+        quarto.log.debug("Skipping image with skip-magic=true")
+        -- Directly return nil to leave this image unmodified in the output
+        return nil
+      else
+        quarto.log.debug("Found an image element. Source: " .. elem.src)
+        local image_name = elem.src:match("^.+/(.+)$") or elem.src
+        table.insert(blocks, pandoc.Para { pandoc.Str(magic_string .. image_name) })
+        quarto.log.debug("Inserting image")
+        table.insert(blocks, pandoc.Para { elem })
+      end
     else
       table.insert(elements, elem)
     end
