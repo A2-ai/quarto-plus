@@ -18,7 +18,7 @@ Upon rendering, certain filters automatically run without any user interaction. 
 
 The header filter parses the intermediate document for empty level 1 headers and removes them to prevent unwanted headers in the rendered Microsoft Word document. For the remaining headers, a tab character is inserted before each one in the rendered Word document to maintain formatting compliance.
 
-The image filter parses the intermediate document for image elements (i.e., images referenced via markdown syntax) and inserts the magic string before the image in the rendered Word document. A magic string is the sentinel value used by the reportifyr R package `{rpfy}:`, followed by the filename of the image. 
+The image filter parses the intermediate document for image elements (i.e., images referenced via markdown syntax) and inserts the magic string before the image in the rendered Word document. A magic string is the sentinel value used by the reportifyr R package `{rpfy}:`, followed by the filename of the image. To avoid including magic strings in the rendered Word document, a user can add the following `{skip-magic=true}` to any images referenced using markdown syntax. 
 
 ### Markdown Divs
 
