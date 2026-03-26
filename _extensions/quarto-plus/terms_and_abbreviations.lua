@@ -1,6 +1,6 @@
 -- Default filenames
 local abbrFile = "abbreviations.tex"
-local logFile = "unmatched_glossary_terms.json"
+local logFile = "unmatched_glossary_terms.log"
 
 -- Function to read in .tex file
 local function readFromFile(filename)
