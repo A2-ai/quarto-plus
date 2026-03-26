@@ -1,3 +1,5 @@
+local utils = require("utils")
+
 -- Shortcode that allows for in-line use of custom styles (as opposed to using custom-styles via divs)
 return {
   ['style'] = function(args, kwargs, meta)
@@ -17,7 +19,7 @@ return {
         <w:t>%s</w:t>
       </w:r>
     </w:p>
-    ]], style, text)
+    ]], utils.escape_xml(style), utils.escape_xml(text))
     return pandoc.RawBlock('openxml', openxml)
   end
 }

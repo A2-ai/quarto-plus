@@ -15,16 +15,6 @@ All headers within the document should be indented.
 
 {{< pagebreak >}}
 
-# magic_string.lua
-
-The following image should have a magic string before it, but after this sentence.
-
-![](images/figure.jpg)
-
-The magic string is dependent on the image's source.
-
-{{< pagebreak >}}
-
 # table_of_contents.lua
 
 Table of Contents should be inserted below.
