@@ -132,8 +132,14 @@ return {
       x_value = table_id_map[bookmark_id]
       label = "Table"
     else
-      x_value = "Unknown"
+      x_value = "??"
       label = "Unknown"
+      quarto.log.warning("Cross-reference bookmark ID does not match a figure or table pattern: " .. bookmark_id)
+    end
+
+    if not x_value then
+      quarto.log.warning("No caption found for cross-reference: " .. bookmark_id .. ". Was the caption defined before this crossref?")
+      x_value = "??"
     end
 
     local openxml = string.format([[
