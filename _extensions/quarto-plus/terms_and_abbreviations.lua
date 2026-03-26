@@ -1,5 +1,5 @@
 -- Default filenames
-local abbrFile = "formatting_files/abbreviations.tex"
+local abbrFile = "abbreviations.tex"
 local logFile = "unmatched_glossary_terms.json"
 
 -- Function to read in .tex file
@@ -13,8 +13,8 @@ local function readFromFile(filename)
         quarto.log.debug("Successfully read from file: " .. filename)
         return content
     else
-        quarto.log.warning("Failed to read from file: " .. filename)
-        error("Could not open file to read: " .. filename)
+        quarto.log.warning("Abbreviations file not found: " .. filename .. ". Skipping abbreviation processing.")
+        return nil
     end
 end
 
