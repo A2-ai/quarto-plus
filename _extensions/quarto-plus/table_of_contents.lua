@@ -1,5 +1,3 @@
-local utils = require("utils")
-
 -- Defaults
 local toc_levels = "1-3"
 local toc_style_map = nil
