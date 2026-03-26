@@ -1,9 +1,12 @@
 -- Initial tables and values to store mappings
 
+local utils = require("utils")
+
 local figure_id_map = {}    -- Table to store the figure bookmark_id
 local table_id_map = {}     -- Table to store the table bookmark_id
 local current_figure_id = 0 -- Initialize the sequence number for figures
 local current_table_id = 0  -- Initialize the sequence number for tables
+local current_bookmark_id = 0 -- Unique bookmark ID counter across all captions
 
 -- Shortcode that allows for cross-referencing table captions
 return {
@@ -17,6 +20,7 @@ return {
     -- Increment the sequence number for each new bookmark_id
     current_table_id = current_table_id + 1
     table_id_map[bookmark_id] = current_table_id
+    current_bookmark_id = current_bookmark_id + 1
 
     quarto.log.debug("Updated tbl ID mapping: " .. bookmark_id .. " -> " .. current_table_id)
 
@@ -25,7 +29,7 @@ return {
       <w:pPr>
         <w:pStyle w:val="Caption"/>
       </w:pPr>
-      <w:bookmarkStart w:id="0" w:name="%s"/>
+      <w:bookmarkStart w:id="%d" w:name="%s"/>
       <w:r>
         <w:t>Table</w:t>
       </w:r>
@@ -47,13 +51,13 @@ return {
       <w:r>
         <w:fldChar w:fldCharType="end"/>
       </w:r>
-      <w:bookmarkEnd w:id="0"/>
+      <w:bookmarkEnd w:id="%d"/>
       <w:r>
         <w:tab/>
           <w:t>%s</w:t>
       </w:r>
     </w:p>
-    ]], bookmark_id, caption_text)
+    ]], current_bookmark_id, utils.escape_xml(bookmark_id), current_bookmark_id, utils.escape_xml(caption_text))
     return pandoc.RawBlock('openxml', openxml)
   end,
 
@@ -68,6 +72,7 @@ return {
     -- Increment the sequence number for each new bookmark_id
     current_figure_id = current_figure_id + 1
     figure_id_map[bookmark_id] = current_figure_id
+    current_bookmark_id = current_bookmark_id + 1
 
     quarto.log.debug("Updated fig ID mapping: " .. bookmark_id .. " -> " .. current_figure_id)
 
@@ -76,7 +81,7 @@ return {
       <w:pPr>
         <w:pStyle w:val="Caption"/>
       </w:pPr>
-      <w:bookmarkStart w:id="0" w:name="%s"/>
+      <w:bookmarkStart w:id="%d" w:name="%s"/>
       <w:r>
         <w:t>Figure</w:t>
       </w:r>
@@ -98,13 +103,13 @@ return {
       <w:r>
         <w:fldChar w:fldCharType="end"/>
       </w:r>
-      <w:bookmarkEnd w:id="0"/>
+      <w:bookmarkEnd w:id="%d"/>
       <w:r>
         <w:tab/>
           <w:t>%s</w:t>
       </w:r>
     </w:p>
-    ]], bookmark_id, caption_text)
+    ]], current_bookmark_id, utils.escape_xml(bookmark_id), current_bookmark_id, utils.escape_xml(caption_text))
     return pandoc.RawBlock('openxml', openxml)
   end,
 
@@ -145,7 +150,7 @@ return {
     <w:r>
       <w:fldChar w:fldCharType="end"/>
     </w:r>
-    ]], bookmark_id, label, x_value)
+    ]], utils.escape_xml(bookmark_id), utils.escape_xml(label), x_value)
     return pandoc.RawInline('openxml', openxml)
   end
 }
