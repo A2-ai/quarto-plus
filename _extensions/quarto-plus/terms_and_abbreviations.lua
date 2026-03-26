@@ -1,4 +1,4 @@
--- Specify the filenames
+-- Default filenames
 local abbrFile = "formatting_files/abbreviations.tex"
 local logFile = "unmatched_glossary_terms.json"
 
@@ -18,41 +18,21 @@ local function readFromFile(filename)
     end
 end
 
--- Function to append log file
-local function writeToFile(filename, content)
-    quarto.log.debug("Attempting to write to file: " .. filename)
-    -- Open in append mode
-    local file = io.open(filename, "a")
+-- Function to write unmatched terms log file
+local function writeLogFile(filename, terms)
+    quarto.log.debug("Writing unmatched glossary terms to: " .. filename)
+    local file = io.open(filename, "w")
     if file then
-        file:write(content .. "\n")
+        for _, term in ipairs(terms) do
+            file:write(term .. "\n")
+        end
         file:close()
-        quarto.log.debug("Successfully wrote to file: " .. filename)
+        quarto.log.debug("Successfully wrote unmatched glossary terms to: " .. filename)
     else
         quarto.log.warning("Could not open file for writing: " .. filename)
         error("Could not open file for writing: " .. filename)
     end
 end
-
--- Function to initialize or clear log file
-local function initializeLogFile(filename)
-    quarto.log.debug("Initializing log file: " .. filename)
-    -- Open in write mode to overwrite the file
-    local file = io.open(filename, "w")
-    if file then
-        file:write("")
-        file:close()
-        quarto.log.debug("Successfully initialized log file: " .. filename)
-    else
-        quarto.log.warning("Could not open file to initialize: " .. filename)
-        error("Could not open file to initialize: " .. filename)
-    end
-end
-
--- Initialize the log file (clear previous content per render)
-initializeLogFile(logFile)
-
--- Read the contents of the file
-local inputText = readFromFile(abbrFile)
 
 -- Function to generate acronymTable
 local function getAcronymTable(inputText)
@@ -79,14 +59,26 @@ local function getAcronymTable(inputText)
     return acronymTable
 end
 
-
--- Generate acronymTable for the render process
-local acronymTable = getAcronymTable(inputText)
-
--- Establish empty list for the render process
+-- State populated during Meta pass
+local acronymTable = {}
 local seenAcronyms = {}
+local unmatchedTerms = {}
 
 return {
+    {
+        Meta = function(meta)
+            if meta["abbreviations-file"] then
+                abbrFile = pandoc.utils.stringify(meta["abbreviations-file"])
+            end
+            if meta["unmatched-glossary-log"] then
+                logFile = pandoc.utils.stringify(meta["unmatched-glossary-log"])
+            end
+
+            -- Parse abbreviations
+            local inputText = readFromFile(abbrFile)
+            acronymTable = getAcronymTable(inputText)
+        end
+    },
     {
         RawInline = function(r)
             local text = r.text
@@ -103,8 +95,8 @@ return {
                         expansion[1]:sub(2) .. "s (" .. replacement .. "s)").blocks[1].content
                     elseif not expansion then
                         quarto.log.warning("Unmatched glossary term: " .. replacement)
-                        -- Log the unmatched glossary term
-                        writeToFile(logFile, replacement)
+                        -- Collect the unmatched glossary term
+                        table.insert(unmatchedTerms, replacement)
                     end
                     return pandoc.read(replacement .. "s").blocks[1].content
                 end
@@ -120,8 +112,8 @@ return {
                         return pandoc.read(expansion[1] .. "s (" .. replacement .. "s)").blocks[1].content
                     elseif not expansion then
                         quarto.log.warning("Unmatched glossary term: " .. replacement)
-                        -- Log the unmatched glossary term
-                        writeToFile(logFile, replacement)
+                        -- Collect the unmatched glossary term
+                        table.insert(unmatchedTerms, replacement)
                     end
                     return pandoc.read(replacement .. "s").blocks[1].content
                 end
@@ -137,8 +129,8 @@ return {
                         return pandoc.read(expansion[1] .. " (" .. replacement .. ")").blocks[1].content
                     elseif not expansion then
                         quarto.log.warning("Unmatched glossary term: " .. replacement)
-                        -- Log the unmatched glossary term
-                        writeToFile(logFile, replacement)
+                        -- Collect the unmatched glossary term
+                        table.insert(unmatchedTerms, replacement)
                     end
                     return pandoc.read(replacement).blocks[1].content
                 end
@@ -156,8 +148,8 @@ return {
                         expansion[1]:sub(2) .. " (" .. replacement .. ")").blocks[1].content
                     elseif not expansion then
                         quarto.log.warning("Unmatched glossary term: " .. replacement)
-                        -- Log the unmatched glossary term
-                        writeToFile(logFile, replacement)
+                        -- Collect the unmatched glossary term
+                        table.insert(unmatchedTerms, replacement)
                     end
                     return pandoc.read(replacement).blocks[1].content
                 end
@@ -191,6 +183,15 @@ return {
                 quarto.log.debug("Acronym table generated successfully")
                 return maybeTable.blocks
             end
+        end
+    },
+    {
+        Pandoc = function(doc)
+            if #unmatchedTerms > 0 then
+                writeLogFile(logFile, unmatchedTerms)
+                quarto.log.warning("Found " .. #unmatchedTerms .. " unmatched glossary term(s). See: " .. logFile)
+            end
+            return doc
         end
     }
 }
