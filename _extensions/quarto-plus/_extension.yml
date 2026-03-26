@@ -10,4 +10,3 @@ contributes:
     - header.lua
     - table_of_contents.lua
     - terms_and_abbreviations.lua
-    - magic_string.lua

@@ -14,11 +14,9 @@ The quarto-plus extension is implemented as a combination of lua filters and sho
 
 ### Automatic Filters
 
-Upon rendering, certain filters automatically run without any user interaction. Within this extension, one filter specifically targets headers, while another targets images.
+Upon rendering, certain filters automatically run without any user interaction. Within this extension, one filter specifically targets headers.
 
 The header filter parses the intermediate document for empty level 1 headers and removes them to prevent unwanted headers in the rendered Microsoft Word document. For the remaining headers, a tab character is inserted before each one in the rendered Word document to maintain formatting compliance.
-
-The image filter parses the intermediate document for image elements (i.e., images referenced via markdown syntax `![](path/to/image)`) and inserts the magic string before the image in the rendered Word document. To disable this behavior, add the class `{skip-magic=true}` to the image: `![](path/to/image){skip-magic=true}`. A magic string is the sentinel value used by the `reportifyr` R package (`{rpfy}:`), followed by the file name of the image. 
 
 ### Markdown Divs
 
