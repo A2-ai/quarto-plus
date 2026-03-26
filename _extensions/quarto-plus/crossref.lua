@@ -13,6 +13,7 @@ return {
   ['tbl_caption'] = function(args, kwargs, meta)
     local bookmark_id = (args[1] or "defaultBookId"):gsub("%s+", "")
     local caption_text = args[2] or "If you see this, you did not provide caption text."
+    local style = pandoc.utils.stringify(meta["caption-style-table"] or "Caption")
 
     quarto.log.debug("Processing table caption with bookmark ID: " .. bookmark_id)
     quarto.log.debug("Caption text: " .. caption_text)
@@ -27,7 +28,7 @@ return {
     local openxml = string.format([[
     <w:p>
       <w:pPr>
-        <w:pStyle w:val="Caption"/>
+        <w:pStyle w:val="%s"/>
       </w:pPr>
       <w:bookmarkStart w:id="%d" w:name="%s"/>
       <w:r>
@@ -37,7 +38,7 @@ return {
         <w:t xml:space="preserve"> </w:t>
       </w:r>
       <w:r>
-        <w:fldChar w:fldCharType="begin"/>
+        <w:fldChar w:fldCharType="begin" w:dirty="true"/>
       </w:r>
       <w:r>
         <w:instrText xml:space="preserve"> SEQ Table \* ARABIC </w:instrText>
@@ -46,7 +47,7 @@ return {
         <w:fldChar w:fldCharType="separate"/>
       </w:r>
       <w:r>
-        <w:t>1</w:t>
+        <w:t>%d</w:t>
       </w:r>
       <w:r>
         <w:fldChar w:fldCharType="end"/>
@@ -57,7 +58,7 @@ return {
           <w:t>%s</w:t>
       </w:r>
     </w:p>
-    ]], current_bookmark_id, utils.escape_xml(bookmark_id), current_bookmark_id, utils.escape_xml(caption_text))
+    ]], utils.escape_xml(style), current_bookmark_id, utils.escape_xml(bookmark_id), current_table_id, current_bookmark_id, utils.escape_xml(caption_text))
     return pandoc.RawBlock('openxml', openxml)
   end,
 
@@ -65,6 +66,7 @@ return {
   ['fig_caption'] = function(args, kwargs, meta)
     local bookmark_id = (args[1] or "defaultBookId"):gsub("%s+", "")
     local caption_text = args[2] or "If you see this, you did not provide caption text."
+    local style = pandoc.utils.stringify(meta["caption-style-figure"] or "Caption")
 
     quarto.log.debug("Processing figure caption with bookmark ID: " .. bookmark_id)
     quarto.log.debug("Caption text: " .. caption_text)
@@ -79,7 +81,7 @@ return {
     local openxml = string.format([[
     <w:p>
       <w:pPr>
-        <w:pStyle w:val="Caption"/>
+        <w:pStyle w:val="%s"/>
       </w:pPr>
       <w:bookmarkStart w:id="%d" w:name="%s"/>
       <w:r>
@@ -89,7 +91,7 @@ return {
         <w:t xml:space="preserve"> </w:t>
       </w:r>
       <w:r>
-        <w:fldChar w:fldCharType="begin"/>
+        <w:fldChar w:fldCharType="begin" w:dirty="true"/>
       </w:r>
       <w:r>
         <w:instrText xml:space="preserve"> SEQ Figure \* ARABIC </w:instrText>
@@ -98,7 +100,7 @@ return {
         <w:fldChar w:fldCharType="separate"/>
       </w:r>
       <w:r>
-        <w:t>1</w:t>
+        <w:t>%d</w:t>
       </w:r>
       <w:r>
         <w:fldChar w:fldCharType="end"/>
@@ -109,7 +111,7 @@ return {
           <w:t>%s</w:t>
       </w:r>
     </w:p>
-    ]], current_bookmark_id, utils.escape_xml(bookmark_id), current_bookmark_id, utils.escape_xml(caption_text))
+    ]], utils.escape_xml(style), current_bookmark_id, utils.escape_xml(bookmark_id), current_figure_id, current_bookmark_id, utils.escape_xml(caption_text))
     return pandoc.RawBlock('openxml', openxml)
   end,
 
