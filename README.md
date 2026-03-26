@@ -104,4 +104,4 @@ The `{{< crossref >}}` shortcode allows a user to cross-reference figure or tabl
 
 ## Examples
 
-Please see the examples.qmd for interactable examples!
+Please see the example.qmd for interactable examples!
