@@ -18,6 +18,8 @@ Upon rendering, certain filters automatically run without any user interaction. 
 
 The header filter parses the intermediate document for empty level 1 headers and removes them to prevent unwanted headers in the rendered Microsoft Word document. For the remaining headers, a tab character is inserted before each one in the rendered Word document to maintain formatting compliance.
 
+Header indentation can be disabled by setting `indent-headers` to `false` in the YAML frontmatter. Default is `true`.
+
 ### Markdown Divs
 
 The quarto-plus extension utilizes markdown divs to create certain elements or fields in the rendered Microsoft Word document. Creating the element or field is as simple as opening and closing the div at the desired location within the Quarto document.
@@ -29,6 +31,18 @@ To create a table of contents field in the Microsoft Word document, please place
 `::: .toc`
 
 `:::`
+
+The table of contents can be configured with the following YAML frontmatter keys:
+
+* `toc-levels` sets the heading level range to include. Default is `"1-3"`.
+* `toc-style-map` allows mapping custom styles to TOC levels. Accepts a list of style/level pairs:
+  ```yaml
+  toc-style-map:
+    - style: "CustomHeading"
+      level: 1
+    - style: "AnotherStyle"
+      level: 2
+  ```
 
 #### List of Figures
 
@@ -48,7 +62,7 @@ To create a list of tables field in the Microsoft Word document, please place th
 
 #### Terms and Abbreviations
 
-The quarto-plus extension allows a user to define abbreviations, acronyms, or terms in an abbreviations.tex file, that will be referenced during document drafting. 
+The quarto-plus extension allows a user to define abbreviations, acronyms, or terms in an abbreviations.tex file, that will be referenced during document drafting. The path to this file can be configured with the `abbreviations-file` frontmatter key (default is `"abbreviations.tex"` in the quarto project root). Unmatched glossary terms are logged to the file specified by `unmatched-glossary-log` (default is `"unmatched_glossary_terms.log"`).
 
 The following is a line from the `abbreviations.tex` file:
 
@@ -93,7 +107,7 @@ The `{{< style >}}` shortcode allows a user to provide in-line customization of 
 
 `{{< style "Caption" "This should be in caption style" >}}`
 
-The `{{< fig_caption >}}` and `{{< tbl_caption >}}` shortcodes allow a user to generate a figure or table caption in the rendered Microsoft Word document. To use the shortcodes, provide the desired bookmark ID and caption text, like so:
+The `{{< fig_caption >}}` and `{{< tbl_caption >}}` shortcodes allow a user to generate a figure or table caption in the rendered Microsoft Word document. The Word style applied to captions can be configured with `caption-style-figure` and `caption-style-table` in the YAML frontmatter (both default to `"Caption"`). To use the shortcodes, provide the desired bookmark ID and caption text, like so:
 
 `{{< fig_caption "Figure 1" "This is a simple concentration-time figure" >}}`
 `{{< tbl_caption "Table 1" "This is a simple summary table" >}}`
